@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Robot Control</title>
+  <style>
+    button { width: 100px; height: 100px; font-size: 24px; }
+  </style>
+</head>
+<body>
+  <h1>Robot Control</h1>
+  <button onclick="sendCommand('FORWARD')">Forward</button>
+  <button onclick="sendCommand('BACKWARD')">Backward</button>
+  <button onclick="sendCommand('LEFT')">Left</button>
+  <button onclick="sendCommand('RIGHT')">Right</button>
+
+  <script>
+    function sendCommand(command) {
+      fetch(`/command?command=${command}`);
+    }
+  </script>
+</body>
+</html>
