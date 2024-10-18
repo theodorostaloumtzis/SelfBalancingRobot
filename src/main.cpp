@@ -7,8 +7,8 @@
 #include "MotorDriver.h"
 
 // WiFi and WebServer variables
-const char* ssid = "COSMOTE-875731";  // Your WiFi SSID
-const char* password = "hda4252txcac5nrm";  // Your WiFi Password
+const char* ssid = "Your_SSID";  // Your WiFi SSID
+const char* password = "Your_WiFi_Password";  // Your WiFi Password
 WebServer server(80);  // Create a web server on port 80
 
 // Initialize objects
