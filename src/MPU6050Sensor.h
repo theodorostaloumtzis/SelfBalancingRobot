@@ -6,7 +6,7 @@
 
 class MPU6050Sensor {
   private:
-    MPU6050 mpu;
+    MPU6050 _mpu;
 
   public:
     MPU6050Sensor();

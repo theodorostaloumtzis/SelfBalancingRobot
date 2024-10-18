@@ -3,9 +3,9 @@
 
 class PIDController {
   private:
-    double Kp, Ki, Kd;
-    double previous_error, total_error;
-    double setpoint;
+    double _Kp, _Ki, _Kd;
+    double _previous_error, _total_error;
+    double _setpoint;
 
   public:
     PIDController(double kp, double ki, double kd, double setpoint_value);
