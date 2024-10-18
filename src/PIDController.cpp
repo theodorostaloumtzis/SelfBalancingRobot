@@ -50,3 +50,54 @@ double PIDController::compute(double current_angle) {
 
   return output;
 }
+
+/**
+ * @brief Set the proportional gain
+ * @details Set the proportional gain of the PID controller. The
+ *          proportional gain is used to calculate the proportional
+ *          term of the PID output. The proportional term is
+ *          calculated as KP * error where error is the difference
+ *          between the setpoint and the current angle.
+ * @param kp The proportional gain
+ */
+void PIDController::setKp(double kp) {
+  _Kp = kp;
+}
+
+/**
+ * @brief Set the integral gain
+ * @details Set the integral gain of the PID controller. The
+ *          integral gain is used to calculate the integral term
+ *          of the PID output. The integral term is calculated as
+ *          KI * total_error where total_error is the sum of all
+ *          errors since the last time the integral term was
+ *          calculated.
+ * @param ki The integral gain
+ */
+void PIDController::setKi(double ki) {
+  _Ki = ki;
+}
+
+/**
+ * @brief Set the derivative gain
+ * @details Set the derivative gain of the PID controller. The
+ *          derivative gain is used to calculate the derivative term
+ *          of the PID output. The derivative term is calculated as
+ *          KD * (current_error - previous_error)
+ * @param kd The derivative gain
+ */
+void PIDController::setKd(double kd) {
+  _Kd = kd;
+}
+
+/**
+ * @brief Set the setpoint of the PID controller
+ * @details Set the setpoint of the PID controller. The setpoint is the
+ *          desired angle of the robot. The PID controller will
+ *          calculate the PID output based on the difference between
+ *          the setpoint and the current angle.
+ * @param setpoint_value The desired angle of the robot.
+ */
+void PIDController::setSetpoint(double setpoint_value) {
+  _setpoint = setpoint_value;
+}

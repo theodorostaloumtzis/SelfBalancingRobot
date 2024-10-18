@@ -10,6 +10,10 @@ class PIDController {
   public:
     PIDController(double kp, double ki, double kd, double setpoint_value);
     double compute(double current_angle);
+    void setKp(double kp);
+    void setKi(double ki);
+    void setKd(double kd);
+    void setSetpoint(double setpoint_value);
 };
 
 #endif

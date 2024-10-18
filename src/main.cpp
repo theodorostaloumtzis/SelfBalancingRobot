@@ -2,6 +2,7 @@
 #include <WebServer.h>
 #include <Wire.h>
 #include <MPU6050.h>
+#include <ESPmDNS.h> // Include mDNS library
 #include "PIDController.h"
 #include "MPU6050Sensor.h"
 #include "MotorDriver.h"
@@ -19,22 +20,14 @@ MotorDriver _motor_driver(16, 17, 18, 19, 5, 4);  // Adjusted pins
 double _current_pitch = 0.0;
 double _pid_output = 0.0;
 
-// Desired IP address
-IPAddress _requestedIP(192, 168, 60, 125);  // Set the requested IP address
-IPAddress _gateway(192, 168, 1, 1); // Set your gateway IP (usually the router's IP)
-IPAddress _subnet(255, 255, 255, 0);  // Set the subnet mask
-
 unsigned long _previous_millis = 0;
-const long _interval = 2; // interval in milliseconds
+const long _interval = 250; // interval in milliseconds
 
-/**
- * @brief Controls the motors based on the received command
- * @details This function controls the motors based on the received command.
- *          It sets the motor speeds according to the command and returns a
- *          confirmation response.
- * @param command The command to control the motors.
- * @return A confirmation response indicating the action taken.
- */
+// Function prototypes
+void handleCommand();
+void handleStatus();
+void handleSetPid();
+
 String controlMotors(String command) {
   int motorSpeed = 0;
   String response = "Command executed: " + command;
@@ -64,93 +57,87 @@ String controlMotors(String command) {
   return response;  // Return confirmation message
 }
 
-/**
- * @brief Handle motor control commands
- * @details This function handles incoming motor control commands. It checks
- *          if the command argument is present in the request, and if it is, it
- *          calls the controlMotors function to control the motors and obtain
- *          a confirmation response. It then sends the confirmation response
- *          back to the client.
- */
 void handleCommand() {
   if (server.hasArg("command")) {
     String command = server.arg("command");
-
-    // Print the received command to the serial monitor
     Serial.print("Command received: ");
     Serial.println(command);
-
-    // Control the motors and obtain a confirmation response
     String response = controlMotors(command);
-    server.send(200, "text/plain", response);  // Send confirmation back to the client
+    server.send(200, "text/plain", response);
   } else {
-    // Handle invalid requests
     server.send(400, "text/plain", "No command received");
   }
 }
 
-/**
- * @brief Handle status request
- * @details This function includes the current pitch angle and PID output in the response and sends it to the server.
- */
 void handleStatus() {
-  // Include current pitch and PID output in the response
   String response = "Pitch Angle: " + String(_current_pitch, 2);
   response += "\nPID Output: " + String(_pid_output, 2);
-
-  server.send(200, "text/plain", response);  // Send pitch and PID values
+  server.send(200, "text/plain", response);
 }
 
-/**
- * @brief Initialize the robot's WiFi connection and server
- * @details This function initializes the robot's WiFi connection using the
- *          specified IP address, gateway, and subnet. It then sets up
- *          endpoints for motor control commands and pitch/PID status requests,
- *          and starts the server.
- */
+void handleSetPid() {
+  if (server.hasArg("Kp")) {
+    double kp = server.arg("Kp").toDouble();
+    _pid.setKp(kp);
+    Serial.println("Kp set to: " + String(kp));
+  }
+  if (server.hasArg("Ki")) {
+    double ki = server.arg("Ki").toDouble();
+    _pid.setKi(ki);
+    Serial.println("Ki set to: " + String(ki));
+  }
+  if (server.hasArg("Kd")) {
+    double kd = server.arg("Kd").toDouble();
+    _pid.setKd(kd);
+    Serial.println("Kd set to: " + String(kd));
+  }
+  server.send(200, "text/plain", "PID values updated");
+}
+
 void setup() {
   Serial.begin(9600);
+  
   _mpu_sensor.initialize();
   _motor_driver.initialize();
-  
-  // Connect to WiFi
-  WiFi.config(_requestedIP, _gateway, _subnet);  // Set the requested IP address, gateway, and subnet
+
   WiFi.begin(ssid, password);
+
+  // Wait for the connection to be established
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Connecting to WiFi...");
   }
+
+  // Print the IP address to the serial monitor
   Serial.println("Connected to WiFi");
+  Serial.println("The IP address is: " + WiFi.localIP().toString());
 
-  // Define endpoints
-  server.on("/command", handleCommand);  // Handle motor control commands
-  server.on("/status", handleStatus);    // Handle pitch and PID status requests
-  server.begin();  // Start the server
+  // Set up mDNS
+  if (MDNS.begin("selfbalancingrobot")) { // Use the desired mDNS name
+    Serial.println("mDNS responder started");
+  } else {
+    Serial.println("Error starting mDNS");
+  }
 
-  Serial.println("Server started");
+  server.on("/command", handleCommand);
+  server.on("/status", handleStatus);
+  server.on("/set_pid", handleSetPid);
+
+  server.begin();
+  Serial.print("ESP32 MAC Address: ");
+  Serial.println(WiFi.macAddress());
   _motor_driver.setMotorSpeed(0, 0);
 }
 
-/**
- * @brief Main loop function
- * @details Handles incoming client requests and updates the PID output 
- *          at a specified interval. The PID output is calculated using the
- *          current pitch angle of the robot. The loop also prints the pitch
- *          angle and PID output to the serial monitor.
- */
 void loop() {
-  server.handleClient();  // Handle incoming client requests
-
+  server.handleClient();
   unsigned long current_millis = millis();
-  if (current_millis - _previous_millis >= _interval){
-    // Get the pitch angle and compute the PID output
-    _current_pitch = _mpu_sensor.getPitchAngle();  // Get the pitch angle
-    _pid_output = _pid.compute(_current_pitch);  // Use pitch angle in PID
-
-    // Print values to the serial monitor
+  if (current_millis - _previous_millis >= _interval) {
+    _current_pitch = _mpu_sensor.getPitchAngle();
+    _pid_output = _pid.compute(_current_pitch);
     Serial.print("Pitch Angle: ");
     Serial.print(_current_pitch);
     Serial.print("\tPID Output: ");
     Serial.println(_pid_output);
-  } 
+  }
 }
