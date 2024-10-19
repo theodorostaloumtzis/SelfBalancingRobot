@@ -1,9 +1,10 @@
-Here’s the enhanced README file written in Markdown format:
+# Self-Balancing Robot Control System
 
-# Self-Balancing Robot
+This repository contains the firmware for a self-balancing robot powered by an ESP32 and an MPU6050 sensor. The robot is controlled via a Flutter app (see [robot_control_app](https://github.com/theodorostaloumtzis/robot_control_app)) using WiFi to send movement commands and adjust PID parameters dynamically.
 
-## Project Overview
+## Features
 
+<<<<<<< HEAD
 The **Self-Balancing Robot** is an innovative project designed to create a mobile robot capable of maintaining its balance autonomously while being controlled remotely. Utilizing an **ESP32 microcontroller**, an **MPU6050 sensor**, and a **PID control algorithm**, this robot not only demonstrates advanced robotics concepts but also provides a practical application of Internet of Things (IoT) technologies. Users can command the robot to move in various directions through a user-friendly Flutter mobile application.
 
 ## Key Features
@@ -30,64 +31,64 @@ The **Self-Balancing Robot** requires the following hardware:
 ![Circuit](images/Connections_Diagram.png)
 
 Here you can see the connections based on the code pins assgnments.
+=======
+- **Self-Balancing**: The robot maintains balance using an MPU6050 sensor and a PID control system.
+- **WiFi Communication**: The ESP32 communicates with a mobile app over WiFi, allowing for real-time control and feedback.
+- **Dynamic PID Tuning**: Adjust the PID controller values (Kp, Ki, Kd) directly from the mobile app to optimize the robot's performance.
+- **Real-Time Status Updates**: The ESP32 provides real-time data such as the pitch angle and PID output to the app.
+>>>>>>> 1d2b0a4b10c78841ebd4138eadb6ffd0bfa91e64
 
 ## Getting Started
 
 ### Prerequisites
 
-Before you begin, ensure you have the following:
+- **Hardware**:
+  - ESP32 microcontroller
+  - MPU6050 sensor for measuring pitch and roll angles
+  - Motors and motor driver (e.g., L298N)
+  
+- **Software**:
+  - The ESP32 should be programmed using the Arduino IDE or PlatformIO with this code.
+  - Flutter app repository: [robot_control_app](https://github.com/theodorostaloumtzis/robot_control_app) for controlling the robot via WiFi.
 
-- An **ESP32** development board
-- An **MPU6050** sensor
-- An **L298N** motor driver
-- DC motors
-- A compatible mobile device with the Flutter app installed
-- Arduino IDE for uploading code to the ESP32
+### Robot Setup
 
-### Installation Steps
+- **ESP32**: This microcontroller handles the communication with the app and processes the balancing logic using the MPU6050 sensor data.
+- **MPU6050**: The sensor measures the pitch angle, which the PID controller uses to keep the robot upright.
+- **Motor Driver**: The ESP32 sends PWM signals to the motor driver (e.g., L298N) to control the robot's movement.
 
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/theodorostaloumtzis/SelfBalancingRobot.git
-   cd SelfBalancingRobot
-   ```
+### Endpoints
 
-2. **Install Necessary Libraries**:
-   Open the Arduino IDE and install the following libraries:
-   - **MPU6050**: For interfacing with the MPU6050 sensor.
-   - **WiFi**: For enabling WiFi connectivity on the ESP32.
+The ESP32 provides the following HTTP endpoints:
 
-3. **Upload the Code**:
-   Open the Arduino project file in the Arduino IDE, connect the ESP32 to your computer, and upload the code.
+- `/command?command=<ACTION>`: Accepts movement commands. Valid actions are `FORWARD`, `BACKWARD`, `LEFT`, `RIGHT`, and `STOP`.
+- `/status`: Returns the current pitch angle and PID output in real-time.
+- `/set_pid?Kp=<value>&Ki=<value>&Kd=<value>`: Sets the PID controller values based on user input from the app.
 
-4. **Hardware Setup**:
-   Connect the components as illustrated in the provided circuit diagram. Ensure all connections are secure.
+### Example Commands
 
-5. **Flutter App Configuration**:
-   - Set up the Flutter app to establish Bluetooth communication.
-   - Follow the setup instructions in the app’s documentation.
+- **Movement Commands**:  
+  To move the robot, send a command like:
+  ```bash
+  http://<robot-ip>/command?command=FORWARD
+  ```
+  
+- **Set PID Values**:  
+  Adjust PID parameters dynamically using:
+  ```bash
+  http://<robot-ip>/set_pid?Kp=1.0&Ki=0.1&Kd=0.05
+  ```
 
-### Usage Instructions
-
-1. **Power On the Robot**: Turn on the robot and ensure it is on a stable surface.
-2. **Connect to WiFi**: Use your mobile device to connect to the robot's WiFi network.
-3. **Open the Flutter App**: Launch the app and connect to the robot.
-4. **Control the Robot**: Use the app's controls to move the robot while it self-balances.
-
-## Code Structure
-
-- **`src/`**: Contains the main firmware for the self-balancing robot.
-- **`README.md`**: Project documentation providing an overview and instructions.
-
-## Contributing
-
-We welcome contributions! If you have suggestions for improvements or features, please fork the repository and submit a pull request. Your contributions help make this project better.
+- **Fetch Status**:  
+  Get the current pitch angle and PID output with:
+  ```bash
+  http://<robot-ip>/status
+  ```
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
+## Author
 
-This project was developed by the [Theodorostaloumtzis](https://github.com/theodorostaloumtzis) team.
-
+- **Theodoros Taloumtzis** - [GitHub](https://github.com/theodorostaloumtzis)
