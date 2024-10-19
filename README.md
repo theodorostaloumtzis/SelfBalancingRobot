@@ -14,13 +14,22 @@ The **Self-Balancing Robot** is an innovative project designed to create a mobil
 - **Mobile App Integration**: A dedicated Flutter application offers an intuitive interface for controlling the robot.
 - **Real-Time Sensor Feedback**: Continuously monitors pitch and roll angles to adjust movements dynamically.
 
-## Components Required
+## Hardware Setup
 
-- **ESP32 Development Board**: Acts as the central controller, enabling WiFi connectivity and processing.
-- **MPU6050 Sensor**: An inertial measurement unit that provides angle measurements to help the robot maintain balance.
-- **L298N Motor Driver**: Drives the motors, allowing for bidirectional movement.
-- **DC Motors**: Provides the necessary movement for the robot.
-- **Power Supply**: Ensure adequate power to the ESP32 and motors.
+The **Self-Balancing Robot** requires the following hardware:
+
+- ESP32 Development Board
+- MPU6050 Sensor
+- L298N Motor Driver
+- DC Motors
+- Power Supply 12V 
+- Switch
+
+## Diagram Circuit
+
+![Circuit](images/Connections_Diagram.png)
+
+Here you can see the connections based on the code pins assgnments.
 
 ## Getting Started
 
