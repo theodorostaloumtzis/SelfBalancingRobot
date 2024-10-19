@@ -2,13 +2,12 @@
 #include <WebServer.h>
 #include <Wire.h>
 #include <MPU6050.h>
-#include <ESPmDNS.h> // Include mDNS library
 #include "PIDController.h"
 #include "MPU6050Sensor.h"
 #include "MotorDriver.h"
 
 // WiFi and WebServer variables
-const char* ssid = "Your_SSID";  // Your WiFi SSID
+const char* ssid = "COSMOTE-875731";  // Your WiFi SSID
 const char* password = "Your_WiFi_Password";  // Your WiFi Password
 WebServer server(80);  // Create a web server on port 80
 
@@ -155,13 +154,6 @@ void setup() {
   // Connection successful, print the IP address
   Serial.println("Connected to WiFi");
   Serial.println("The IP address is: " + WiFi.localIP().toString());
-
-  // Set up mDNS responder with the desired name
-  if (MDNS.begin("selfbalancingrobot")) {
-    Serial.println("mDNS responder started");
-  } else {
-    Serial.println("Error starting mDNS");
-  }
 
   // Set up HTTP server routes
   server.on("/command", handleCommand); // Route for handling commands
